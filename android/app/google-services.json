@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "282152325024",
+    "project_id": "rvaa-8277a",
+    "storage_bucket": "rvaa-8277a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282152325024:android:de67f012b9983015fc9ec5",
+        "android_client_info": {
+          "package_name": "com.example.rvaa_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVgSeT8PANkk8k51MNnyHRNGXMzYPAlW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
