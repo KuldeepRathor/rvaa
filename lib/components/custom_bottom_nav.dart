@@ -103,6 +103,8 @@ class _CustomBottomNavState extends State<CustomBottomNav> {
                   debugPrint('current selected index $index');
                   _pageController.jumpToPage(index);
                 },
+                kIconSize: 30,
+                kBottomRadius: 30,
               ),
             )
           : null,
