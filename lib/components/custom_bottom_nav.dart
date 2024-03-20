@@ -1,8 +1,10 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:rvaa_1/components/appbar.dart';
 import 'package:rvaa_1/features/homepage/view/homepage.dart';
 import 'package:rvaa_1/features/profile/view/profile_page.dart';
+import 'package:rvaa_1/features/screens/recent_screens.dart';
 
 class CustomBottomNav extends StatefulWidget {
   const CustomBottomNav({Key? key}) : super(key: key);
@@ -108,44 +110,6 @@ class _CustomBottomNavState extends State<CustomBottomNav> {
               ),
             )
           : null,
-    );
-  }
-}
-
-class RecentsScreen extends StatelessWidget {
-  const RecentsScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: CustomAppBar(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Hero(
-              tag: "clock",
-              child: Icon(
-                Icons.access_time,
-                size: 60,
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Your recent activity will appear here.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                height: 0.08,
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

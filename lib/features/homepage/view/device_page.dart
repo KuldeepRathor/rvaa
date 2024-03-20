@@ -277,14 +277,16 @@ class _DevicePageState extends State<DevicePage> {
                             child: Column(
                               children: [
                                 Container(
-                                  // height: 100,
-                                  // width: 100,
+                                  height: 85,
+                                  width: 125,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(14),
                                     color: Colors.white,
                                   ),
                                   child: Image.asset(
+                                    // height: 85,
                                     'assets/images/location.png',
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
                                 SizedBox(
