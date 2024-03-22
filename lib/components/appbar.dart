@@ -108,6 +108,7 @@ class ProfileAppbar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // CircleAvatar(
           //   backgroundColor: const Color(0xffF7F7F9),
@@ -121,15 +122,18 @@ class ProfileAppbar extends StatelessWidget {
           //     },
           //   ),
           // ),
-          const Spacer(),
-          Text(
-            pageName,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+          //const Spacer(),
+          Center(
+            child: Text(
+              pageName,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          const Spacer(),
+         const Spacer(),
           CircleAvatar(
             backgroundColor: const Color(0xffF7F7F9),
             child: IconButton(
