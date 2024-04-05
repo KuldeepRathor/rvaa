@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rvaa_1/components/activity_widget.dart';
 import 'package:rvaa_1/components/appbar.dart';
-
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import '../controller/blynk_server.dart';
 
 class DevicePage extends StatefulWidget {
   const DevicePage({Key? key}) : super(key: key);
@@ -13,7 +15,30 @@ class DevicePage extends StatefulWidget {
 }
 
 class _DevicePageState extends State<DevicePage> {
-  bool isIgnitionOn = true;
+  late Timer _timer;
+  bool isIgnitionOn = false;
+  BlynkValueUpdater updater = BlynkValueUpdater();
+  Future<void> fetchUpdate() async {
+    try {
+      // Make GET request to fetch latest value
+      var url = Uri.parse('https://blr1.blynk.cloud/external/api/get?token=oDYu4NIUESikAdZ_s3kyUgCEKWsIe08N&pin=v1');
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        // Parse response and update state
+        var value = response.body;
+        setState(() {
+          isIgnitionOn = (value == '1'); // Assuming '1' represents ON state
+        });
+      } else {
+        throw 'Failed to fetch update. Status code: ${response.statusCode}';
+      }
+    } catch (e) {
+      print('Error fetching update: $e');
+      // Handle error (e.g., show error message to user)
+    }
+  }
+
   List<User> userList = [
     User(
       name: 'Vinayak',
@@ -115,6 +140,22 @@ class _DevicePageState extends State<DevicePage> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+  @override
+  void initState() {
+    super.initState();
+    // Start the timer to fetch updates every 5 seconds (adjust interval as needed)
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      fetchUpdate();
+    });
+  }
+
+// Cancel the timer in dispose method
+  @override
+  void dispose() {
+    super.dispose();
+    // Cancel the timer when the widget is disposed to avoid memory leaks
+    _timer.cancel();
   }
 
   @override
@@ -231,14 +272,29 @@ class _DevicePageState extends State<DevicePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             setState(() {
                               isIgnitionOn = !isIgnitionOn;
                             });
+                            await updater.updateValue(isIgnitionOn);
                           },
+                          // onTap: () {
+                          //   if(isIgnitionOn == false ){
+                          //     setState(()  {
+                          //       isIgnitionOn = !isIgnitionOn;
+                          //       updatevalue();
+                          //     });
+                          //   }
+                          //   else{
+                          //     setState(()  {
+                          //       isIgnitionOn = !isIgnitionOn;
+                          //       reupdatevalue();
+                          //       });
+                          //   }
+                          // },
                           child: Container(
                             height: 135,
-                            width: 135,
+                            width: 120,
                             decoration: BoxDecoration(
                               color: isIgnitionOn
                                   ? Colors.green.withOpacity(0.3)
@@ -262,9 +318,10 @@ class _DevicePageState extends State<DevicePage> {
                             ),
                           ),
                         ),
+                        SizedBox(width: 5,),
                         Container(
                           height: 135,
-                          width: 135,
+                          //width: 135,
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: Colors.black,
@@ -277,8 +334,13 @@ class _DevicePageState extends State<DevicePage> {
                             child: Column(
                               children: [
                                 Container(
+<<<<<<< Updated upstream
                                   height: 85,
                                   width: 125,
+=======
+                                  // height: 100,
+                                  width: 100,
+>>>>>>> Stashed changes
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(14),
                                     color: Colors.white,
@@ -353,3 +415,25 @@ class User {
     required this.carNumber,
   });
 }
+
+// updatevalue() async{
+//   var url =  Uri.parse('https://blr1.blynk.cloud/external/api/update?token=oDYu4NIUESikAdZ_s3kyUgCEKWsIe08N&v1=1');
+//   var res = await http.get(url);
+//
+//   if (res.statusCode == 200) {
+//     print("value updated");
+//   } else {
+//     throw "Unable to retrieve posts.";
+//   }
+// }
+//
+// reupdatevalue() async{
+//   var url =  Uri.parse('https://blr1.blynk.cloud/external/api/update?token=oDYu4NIUESikAdZ_s3kyUgCEKWsIe08N&v1=0');
+//   var res = await http.get(url);
+//
+//   if (res.statusCode == 200) {
+//     print("value updated");
+//   } else {
+//     throw "Unable to retrieve posts.";
+//   }
+// }
