@@ -114,9 +114,10 @@ class _RecentsScreenState extends State<RecentsScreen> {
         localizedReason: "Authenticate for biometric access",
         options: const AuthenticationOptions(
           stickyAuth: true,
-          biometricOnly: true,
+          // biometricOnly: true,
         ),
       );
+
       debugPrint("Authenticated: $authenticated");
     } on PlatformException catch (e) {
       debugPrint(e.toString());
