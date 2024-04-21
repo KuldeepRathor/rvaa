@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:rvaa_1/components/activity_widget.dart';
 import 'package:rvaa_1/components/appbar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,13 +17,17 @@ class DevicePage extends StatefulWidget {
 }
 
 class _DevicePageState extends State<DevicePage> {
+  late final LocalAuthentication auth;
+  bool _supportState = false;
+
   late Timer _timer;
   bool isIgnitionOn = false;
   BlynkValueUpdater updater = BlynkValueUpdater();
   Future<void> fetchUpdate() async {
     try {
       // Make GET request to fetch latest value
-      var url = Uri.parse('https://blr1.blynk.cloud/external/api/get?token=oDYu4NIUESikAdZ_s3kyUgCEKWsIe08N&pin=v1');
+      var url = Uri.parse(
+          'https://blr1.blynk.cloud/external/api/get?token=oDYu4NIUESikAdZ_s3kyUgCEKWsIe08N&pin=v1');
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -141,6 +147,7 @@ class _DevicePageState extends State<DevicePage> {
       throw 'Could not launch $url';
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -148,6 +155,10 @@ class _DevicePageState extends State<DevicePage> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       fetchUpdate();
     });
+    auth = LocalAuthentication();
+    auth.isDeviceSupported().then((bool isSupported) => setState(() {
+          _supportState = isSupported;
+        }));
   }
 
 // Cancel the timer in dispose method
@@ -156,6 +167,28 @@ class _DevicePageState extends State<DevicePage> {
     super.dispose();
     // Cancel the timer when the widget is disposed to avoid memory leaks
     _timer.cancel();
+  }
+
+  Future<void> _authenticateAndToggleIgnition() async {
+    try {
+      bool authenticated = await auth.authenticate(
+        localizedReason: "Authenticate for biometric access",
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          // biometricOnly: true,
+        ),
+      );
+
+      if (authenticated) {
+        // If authenticated, toggle ignition state
+        setState(() {
+          isIgnitionOn = !isIgnitionOn;
+        });
+        await updater.updateValue(isIgnitionOn);
+      }
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   @override
@@ -273,10 +306,12 @@ class _DevicePageState extends State<DevicePage> {
                       children: [
                         GestureDetector(
                           onTap: () async {
-                            setState(() {
-                              isIgnitionOn = !isIgnitionOn;
-                            });
-                            await updater.updateValue(isIgnitionOn);
+                            _authenticateAndToggleIgnition();
+
+                            // setState(() {
+                            //   isIgnitionOn = !isIgnitionOn;
+                            // });
+                            // await updater.updateValue(isIgnitionOn);
                           },
                           // onTap: () {
                           //   if(isIgnitionOn == false ){
@@ -318,7 +353,9 @@ class _DevicePageState extends State<DevicePage> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 5,),
+                        SizedBox(
+                          width: 5,
+                        ),
                         Container(
                           height: 135,
                           //width: 135,
@@ -334,13 +371,8 @@ class _DevicePageState extends State<DevicePage> {
                             child: Column(
                               children: [
                                 Container(
-<<<<<<< Updated upstream
-                                  height: 85,
-                                  width: 125,
-=======
                                   // height: 100,
                                   width: 100,
->>>>>>> Stashed changes
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(14),
                                     color: Colors.white,
@@ -399,6 +431,32 @@ class _DevicePageState extends State<DevicePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _authenticate() async {
+    try {
+      bool authenticated = await auth.authenticate(
+        localizedReason: "Authenticate for biometric access",
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          // biometricOnly: true,
+        ),
+      );
+
+      debugPrint("Authenticated: $authenticated");
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> _getAvailableBiometrics() async {
+    List<BiometricType> availableBiometrics =
+        await auth.getAvailableBiometrics();
+    debugPrint("List of available biometrics: $availableBiometrics");
+
+    if (!mounted) {
+      return;
+    }
   }
 }
 
